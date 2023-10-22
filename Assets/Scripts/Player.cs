@@ -29,6 +29,7 @@ public class Player : MonoCache
     }
 
     public override void OnTick()
+    public override void OnTick()
     {
         float moveInput = Input.GetAxis("Horizontal");
         rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
