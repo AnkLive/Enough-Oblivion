@@ -21,15 +21,15 @@ public class MonoCache : MonoBehaviour
     
     protected void RemoveLateUpdate() => AllLateUpdate.Remove(this);
 
-    public void Tick() => OnTick();
+    public void Tick() => Run();
     
-    public virtual void OnTick() { }
+    public virtual void Run() { }
     
-    public void FixedTick() => OnFixedTick();
+    public void FixedTick() => FixedRun();
     
-    public virtual void OnFixedTick() { }
+    public virtual void FixedRun() { }
     
-    public void LateTick() => OnLateTick();
+    public void LateTick() => LateRun();
     
-    public virtual void OnLateTick() { }
+    public virtual void LateRun() { }
 }
