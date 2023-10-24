@@ -3,7 +3,7 @@ using System.Collections;
 using NaughtyAttributes;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class PlayerUnitMovementComponent : MonoCache
+public class PlayerUnitMovementComponent : MonoCache, IInitialize<PlayerUnitMovementComponent>, IActivate<PlayerUnitMovementComponent>
 {
     #region Field
 

@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
+using Zenject;
 
 [RequireComponent(typeof(PlayerUnitMovementComponent))]
 public class PlayerUnit : MonoBehaviour
 {
-    private PlayerUnitMovementComponent _playerUnitMovementComponent;
+    [Inject] private IInitialize<PlayerUnitMovementComponent> _playerUnitMovementComponentInitialize;
+    [Inject] private IActivate<PlayerUnitMovementComponent> _playerUnitMovementComponentActivate;
     private void Start()
     {
-        _playerUnitMovementComponent = gameObject.GetComponent<PlayerUnitMovementComponent>();
-        _playerUnitMovementComponent.Initialize();
-        _playerUnitMovementComponent.Activate();
+        _playerUnitMovementComponentInitialize.Initialize();
+        _playerUnitMovementComponentActivate.Activate();
     }
 }
