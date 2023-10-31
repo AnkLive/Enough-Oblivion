@@ -3,11 +3,13 @@ using System.Collections;
 using NaughtyAttributes;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class PlayerUnitMovementComponent : MonoCache, IInitialize<PlayerUnitMovementComponent>, IActivate<PlayerUnitMovementComponent>
+public class PlayerUnitMovementComponent : MonoCache, 
+    IInitialize<PlayerUnitMovementComponent>, 
+    IActivate<PlayerUnitMovementComponent>
 {
-    #region Field
+    #region Fields
 
-    private Controller _controller;
+    private PlayerInput _playerInput;
     // Ссылка на компонент Rigidbody2D объекта.
     private Rigidbody2D _objectRigidbody;
     
@@ -83,53 +85,38 @@ public class PlayerUnitMovementComponent : MonoCache, IInitialize<PlayerUnitMove
 
     public void Activate()
     {
-        _controller.Main.Jump.performed += _ => PerformJump();
-        _controller.Main.Dash.performed += _ => PerformDash();
-        _controller.Enable();
-        AddFixedUpdate();
+        _playerInput.OnMove += PerformMove;
+        _playerInput.OnJump += PerformJump;
+        _playerInput.OnDash += PerformDash;
     }
 
     public void Deactivate()
     {
-        _controller.Disable();
-        RemoveFixedUpdate();
+        _playerInput.OnMove -= PerformMove;
+        _playerInput.OnJump -= PerformJump;
+        _playerInput.OnDash -= PerformDash;
     }
     
     public void Initialize()
     {
-        _controller = new Controller();
+        _playerInput = GetComponent<PlayerInput>();
         // Получаем ссылку на компонент Rigidbody2D при старте.
         _objectRigidbody = GetComponent<Rigidbody2D>();
         
-    }
-    
-    public override void FixedRun()
-    {
-        // Получаем ввод движения от игрока.
-        UpdateMovementInput();
-        CheckGroundedStatus();
-        
-        if (_isDashing) return;
-        
-        if (canMove)
-        {
-            Move();
-        }
     }
 
     #endregion
 
     #region Movement
     
-    private void Move()
+    private void PerformMove(float direction)
     {
+        if(_isDashing) return;
+        
+        _moveInput = direction;
+        CheckGroundedStatus();
         // Устанавливаем скорость персонажа на основе ввода движения.
         _objectRigidbody.velocity = new Vector2(_moveInput * moveSpeed, _objectRigidbody.velocity.y);
-    }
-    
-    private void UpdateMovementInput()
-    {
-        _moveInput = _controller.Main.Move.ReadValue<float>();
     }
 
     #endregion
@@ -138,6 +125,10 @@ public class PlayerUnitMovementComponent : MonoCache, IInitialize<PlayerUnitMove
     
     private void PerformJump()
     {
+        if(_isDashing) return;
+        
+        CheckGroundedStatus();
+        
         if (_isGrounded)
         {
             _doubleJumped = false;
